@@ -1,23 +1,20 @@
 package com.mygdx.game.screen;
 
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.Assets;
 import com.mygdx.game.SpaceInvaders;
 
 public class SpaceInvadersScreen implements Screen {
-    SpaceInvaders si;
+    SpaceInvaders game;
     Assets assets;
-    SpriteBatch batch;
 
-    public SpaceInvadersScreen(SpaceInvaders si){
-        this.si = si;
-        this.assets = si.assets;
-        this.batch = si.spriteBatch;
+    public SpaceInvadersScreen(SpaceInvaders game){
+        this.game = game;
+        this.assets = game.assets;
     }
 
     void setScreen(Screen screen){
-        si.setScreen(screen);
+        game.setScreen(screen);
     }
 
     @Override
