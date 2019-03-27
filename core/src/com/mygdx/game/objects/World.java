@@ -37,13 +37,13 @@ public class World {
         ship.update(delta, assets);
         alienArmy.update(delta, assets);
 
-        checkCollisions();
+        checkCollisions(assets);
     }
 
-    private void checkCollisions() {
+    private void checkCollisions(Assets assets) {
         checkNaveInWorld();
         checkShootsInWorld();
-        checkShootsToAlien();
+        checkShootsToAlien(assets);
         checkShootsToShip();
     }
 
@@ -60,7 +60,7 @@ public class World {
         }
     }
 
-    private void checkShootsToAlien() {
+    private void checkShootsToAlien(Assets assets) {
         for(Shoot shoot: ship.weapon.shoots){
             Rectangle shootRectangle = new Rectangle(shoot.position.x, shoot.position.y, shoot.frame.getRegionWidth(), shoot.frame.getRegionHeight());
             for(Alien alien: alienArmy.aliens){
@@ -70,6 +70,7 @@ public class World {
                     if (Intersector.overlaps(shootRectangle, alienRectangle)) {
                         alien.kill();
                         shoot.remove();
+                        assets.aliendieSound.play();
                     }
                 }
             }

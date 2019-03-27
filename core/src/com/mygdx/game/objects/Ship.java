@@ -70,6 +70,7 @@ public class Ship {
 
         if(Controls.isShootPressed()) {
             shoot();
+            assets.shootSound.play();
         }
 
         setFrame(assets);

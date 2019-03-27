@@ -51,7 +51,7 @@ public class AlienArmy {
         shootTimer.update(delta);
 
         move();
-        shoot();
+        shoot(assets);
 
         for(Alien alien: aliens) {
             alien.update(delta, assets);
@@ -94,13 +94,15 @@ public class AlienArmy {
         }
     }
 
-    void shoot(){
+    void shoot(Assets assets){
         if(shootTimer.check()){
             int alienNum = random.nextInt(aliens.size);
 
             Alien alien = aliens.get(alienNum);
 
             shoots.add(new AlienShoot(new Vector2(alien.position)));
+
+            assets.alienSound.play();
 
             shootTimer.set(random.nextFloat()%5+1);
         }

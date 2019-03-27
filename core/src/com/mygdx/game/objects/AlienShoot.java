@@ -32,7 +32,7 @@ public class AlienShoot {
 
         position.y -= speed;
 
-        frame = assets.shoot.getKeyFrame(stateTime, true);
+        frame = assets.alienshoot.getKeyFrame(stateTime, true);
     }
 
     public void remove(){
