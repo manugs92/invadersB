@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Assets;
 
-public class Shoot {
+public class AlienShoot {
     enum State {
         SHOOTING, TO_REMOVE
     }
@@ -14,12 +14,12 @@ public class Shoot {
 
     float stateTime;
     State state;
-    float speed = 5;
+    float speed = 1;
 
     TextureRegion frame;
 
-    Shoot(float position){
-        this.position = new Vector2(position, 16);
+    AlienShoot(Vector2 position){
+        this.position = position;
         state = State.SHOOTING;
     }
 
@@ -30,7 +30,7 @@ public class Shoot {
     public void update(float delta, Assets assets) {
         stateTime += delta;
 
-        position.y += speed;
+        position.y -= speed;
 
         frame = assets.shoot.getKeyFrame(stateTime, true);
     }

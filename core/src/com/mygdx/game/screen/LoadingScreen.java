@@ -11,7 +11,6 @@ public class LoadingScreen extends SpaceInvadersScreen {
     @Override
     public void render(float delta) {
         if(!assets.update()){
-            System.out.println(assets.getProgress());
             return;
         }
 

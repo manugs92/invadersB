@@ -1,12 +1,14 @@
 package com.mygdx.game.objects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.game.Assets;
 
 public class World {
     Space space;
-    Nave nave;
+    Ship ship;
+    AlienArmy alienArmy;
 
     int WORLD_WIDTH, WORLD_HEIGHT;
 
@@ -15,22 +17,25 @@ public class World {
         this.WORLD_HEIGHT = WORLD_HEIGHT;
 
         space = new Space();
-        nave = new Nave(WORLD_WIDTH/2);
+        ship = new Ship(WORLD_WIDTH/2);
+        alienArmy = new AlienArmy(WORLD_WIDTH, WORLD_HEIGHT);
     }
 
     public void render(float delta, SpriteBatch batch, Assets assets){
 
-        update(delta);
+        update(delta, assets);
 
         batch.begin();
-        space.render(batch, assets);
-        nave.render(batch, assets);
+        space.render(batch);
+        ship.render(batch);
+        alienArmy.render(batch);
         batch.end();
     }
 
-    void update(float delta){
-        space.update(delta);
-        nave.update(delta);
+    void update(float delta, Assets assets){
+        space.update(delta, assets);
+        ship.update(delta, assets);
+        alienArmy.update(delta, assets);
 
         checkCollisions();
     }
@@ -38,26 +43,58 @@ public class World {
     private void checkCollisions() {
         checkNaveInWorld();
         checkShootsInWorld();
+        checkShootsToAlien();
+        checkShootsToShip();
+    }
+
+    private void checkShootsToShip() {
+        Rectangle shipRectangle = new Rectangle(ship.position.x, ship.position.y, ship.frame.getRegionWidth(), ship.frame.getRegionHeight());
+
+        for(AlienShoot shoot: alienArmy.shoots){
+            Rectangle shootRectangle = new Rectangle(shoot.position.x, shoot.position.y, shoot.frame.getRegionWidth(), shoot.frame.getRegionHeight());
+
+            if (Intersector.overlaps(shootRectangle, shipRectangle)) {
+                ship.damage();
+                shoot.remove();
+            }
+        }
+    }
+
+    private void checkShootsToAlien() {
+        for(Shoot shoot: ship.weapon.shoots){
+            Rectangle shootRectangle = new Rectangle(shoot.position.x, shoot.position.y, shoot.frame.getRegionWidth(), shoot.frame.getRegionHeight());
+            for(Alien alien: alienArmy.aliens){
+                if(alien.isAlive()) {
+                    Rectangle alienRectangle = new Rectangle(alien.position.x, alien.position.y, alien.frame.getRegionWidth(), alien.frame.getRegionHeight());
+
+                    if (Intersector.overlaps(shootRectangle, alienRectangle)) {
+                        alien.kill();
+                        shoot.remove();
+                    }
+                }
+            }
+        }
     }
 
     private void checkShootsInWorld() {
-        Array<Shoot> shootsToRemove = new Array<Shoot>();
-        for(Shoot shoot: nave.weapon.shoots){
+        for(Shoot shoot: ship.weapon.shoots){
             if(shoot.position.y > WORLD_HEIGHT){
-                shootsToRemove.add(shoot);
+                shoot.remove();
             }
         }
 
-        for (Shoot shoot: shootsToRemove){
-            nave.weapon.shoots.removeValue(shoot, true);
+        for(AlienShoot shoot: alienArmy.shoots){
+            if(shoot.position.y < 0){
+                shoot.remove();
+            }
         }
     }
 
     private void checkNaveInWorld() {
-        if(nave.position > WORLD_WIDTH-32){
-            nave.position = WORLD_WIDTH-32;
-        } else if(nave.position < 0){
-            nave.position = 0;
+        if(ship.position.x > WORLD_WIDTH-32){
+            ship.position.x = WORLD_WIDTH-32;
+        } else if(ship.position.x < 0){
+            ship.position.x = 0;
         }
     }
 }

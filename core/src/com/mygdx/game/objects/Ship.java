@@ -2,52 +2,62 @@ package com.mygdx.game.objects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Assets;
 import com.mygdx.game.Controls;
 
-public class Nave {
+public class Ship {
+
     enum State {
         IDLE, LEFT, RIGHT, SHOOT;
     }
 
-    int position;
+    Vector2 position;
 
     State state;
     float stateTime;
     float speed = 5;
 
+    TextureRegion frame;
+
     Weapon weapon;
 
-    Nave(int initialPosition){
-        position = initialPosition;
+    Ship(int initialPosition){
+        position = new Vector2(initialPosition, 10);
         state = State.IDLE;
         stateTime = 0;
 
         weapon = new Weapon();
     }
 
-    TextureRegion getFrame(Assets assets){
+
+    void setFrame(Assets assets){
         switch (state){
             case IDLE:
-                return assets.naveidle.getKeyFrame(stateTime, true);
+                frame = assets.naveidle.getKeyFrame(stateTime, true);
+                break;
             case LEFT:
-                return assets.naveleft.getKeyFrame(stateTime, true);
+                frame = assets.naveleft.getKeyFrame(stateTime, true);
+                break;
             case RIGHT:
-                return assets.naveright.getKeyFrame(stateTime, true);
+                frame = assets.naveright.getKeyFrame(stateTime, true);
+                break;
             case SHOOT:
-                return assets.naveshoot.getKeyFrame(stateTime, true);
+                frame = assets.naveshoot.getKeyFrame(stateTime, true);
+                break;
             default:
-                return assets.naveidle.getKeyFrame(stateTime, true);
+                frame = assets.naveidle.getKeyFrame(stateTime, true);
+                break;
         }
     }
 
-    void render(SpriteBatch batch, Assets assets){
-        batch.draw(getFrame(assets), position, 10);
+    void render(SpriteBatch batch){
+        batch.draw(frame, position.x, position.y);
 
-        weapon.render(batch, assets);
+        weapon.render(batch);
     }
 
-    public void update(float delta) {
+    public void update(float delta, Assets assets) {
         stateTime += delta;
 
         if(Controls.isLeftPressed()){
@@ -62,7 +72,9 @@ public class Nave {
             shoot();
         }
 
-        weapon.update(delta);
+        setFrame(assets);
+
+        weapon.update(delta, assets);
     }
 
     void idle(){
@@ -70,17 +82,21 @@ public class Nave {
     }
 
     void moveLeft(){
-        position -= speed;
+        position.x -= speed;
         state = State.LEFT;
     }
 
     void moveRight(){
-        position += speed;
+        position.x += speed;
         state = State.RIGHT;
     }
 
     void shoot(){
         state = State.SHOOT;
-        weapon.shoot(position+16);
+        weapon.shoot(position.x +16);
+    }
+
+    public void damage() {
+
     }
 }

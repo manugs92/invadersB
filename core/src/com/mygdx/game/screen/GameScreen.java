@@ -14,8 +14,8 @@ public class GameScreen extends SpaceInvadersScreen {
     public OrthographicCamera camera;
     public Viewport viewport;
 
-    public int SCENE_WIDTH = 512;
-    public int SCENE_HEIGHT = 384;
+    public int SCENE_WIDTH = 384;
+    public int SCENE_HEIGHT = 256;
 
     World world;
 

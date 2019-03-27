@@ -1,47 +1,52 @@
 package com.mygdx.game.objects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Assets;
-import com.mygdx.game.Controls;
+import com.mygdx.game.Timer;
 
 public class Weapon {
 
-    enum State {
-        IDLE, SHOOTING;
-    }
-
     Array<Shoot> shoots;
 
-    State state;
-    float stateTime;
-    float shootRate = 0.5f;
+    Timer shootTimer;
+    float shootRate = 0.4f;
 
     Weapon(){
         shoots = new Array<Shoot>();
-        state = State.IDLE;
-        stateTime = 0;
+        shootTimer = new Timer(shootRate);
     }
 
-    void render(SpriteBatch batch, Assets assets){
+    void render(SpriteBatch batch){
         for (Shoot shoot: shoots) {
-            shoot.render(batch, assets);
+            shoot.render(batch);
         }
     }
 
-    public void update(float delta) {
-        stateTime += delta;
+    public void update(float delta, Assets assets) {
+        shootTimer.update(delta);
         for(Shoot shoot: shoots){
-            shoot.update(delta);
+            shoot.update(delta, assets);
+        }
+        removeShoots();
+    }
+
+    public void shoot(float position){
+        if(shootTimer.check()){
+            shoots.add(new Shoot(position));
         }
     }
 
-    public void shoot(int position){
-        state = State.SHOOTING;
-        if(stateTime > shootRate){
-            shoots.add(new Shoot(position));
-            stateTime = 0;
+    public void removeShoots(){
+        Array<Shoot> shootsToRemove = new Array<Shoot>();
+        for(Shoot shoot:shoots){
+            if(shoot.state == Shoot.State.TO_REMOVE){
+                shootsToRemove.add(shoot);
+            }
+        }
+
+        for (Shoot shoot: shootsToRemove){
+            shoots.removeValue(shoot, true);
         }
     }
 }
