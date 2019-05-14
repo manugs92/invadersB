@@ -13,6 +13,7 @@ public class Assets extends AssetManager {
     public Sound shootSound = Gdx.audio.newSound(Gdx.files.internal("shootsound.wav"));
     public Sound alienSound = Gdx.audio.newSound(Gdx.files.internal("aliensound.wav"));
     public Sound aliendieSound = Gdx.audio.newSound(Gdx.files.internal("aliendie.wav"));
+    public Sound shipDamageSound = Gdx.audio.newSound(Gdx.files.internal("damage.mp3"));
 
     public void load(){
         load("invaders.atlas", TextureAtlas.class);

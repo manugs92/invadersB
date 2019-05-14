@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Assets;
+import com.mygdx.game.Configuration;
 import com.mygdx.game.Timer;
 
 import java.util.Random;
@@ -50,20 +51,28 @@ public class AlienArmy {
         moveTimer.update(delta);
         shootTimer.update(delta);
 
-        move();
-        shoot(assets);
+        if(!areAllAliensDead()) {
+            move();
+            shoot(assets);
 
-        for(Alien alien: aliens) {
-            alien.update(delta, assets);
+            for(Alien alien: aliens) {
+                alien.update(delta, assets);
+            }
+
+            for(AlienShoot shoot: shoots){
+                shoot.update(delta, assets);
+            }
+
+
+            removeDeadAliens();
+            removeShoots();
         }
+    }
 
-        for(AlienShoot shoot: shoots){
-            shoot.update(delta, assets);
-        }
-
-
-        removeDeadAliens();
-        removeShoots();
+    public boolean areAllAliensDead() {
+        if(aliens.size==0) {
+            return true; }
+        else { return false; }
     }
 
 
@@ -102,7 +111,10 @@ public class AlienArmy {
 
             shoots.add(new AlienShoot(new Vector2(alien.position)));
 
-            assets.alienSound.play();
+            if(!Configuration.isSoundsDisabled()) {
+                assets.alienSound.play();
+            }
+
 
             shootTimer.set(random.nextFloat()%5+1);
         }

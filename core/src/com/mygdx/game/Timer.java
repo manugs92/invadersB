@@ -23,4 +23,8 @@ public class Timer {
     public void set(float max){
         this.max = max;
     }
+
+    public float getTime() {
+        return time;
+    }
 }

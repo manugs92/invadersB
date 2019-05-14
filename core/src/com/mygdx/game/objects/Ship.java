@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Assets;
+import com.mygdx.game.Configuration;
 import com.mygdx.game.Controls;
 
 public class Ship {
@@ -22,12 +23,17 @@ public class Ship {
 
     Weapon weapon;
 
+    Lifes lifes;
+
+    AliensKilled aliensKilled;
+
     Ship(int initialPosition){
         position = new Vector2(initialPosition, 10);
         state = State.IDLE;
         stateTime = 0;
-
         weapon = new Weapon();
+        lifes = new Lifes();
+        aliensKilled = new AliensKilled();
     }
 
 
@@ -53,7 +59,8 @@ public class Ship {
 
     void render(SpriteBatch batch){
         batch.draw(frame, position.x, position.y);
-
+        lifes.render(batch);
+        aliensKilled.render(batch);
         weapon.render(batch);
     }
 
@@ -70,7 +77,10 @@ public class Ship {
 
         if(Controls.isShootPressed()) {
             shoot();
-            assets.shootSound.play();
+            if(!Configuration.isSoundsDisabled()) {
+                assets.shootSound.play();
+            }
+
         }
 
         setFrame(assets);
@@ -97,7 +107,26 @@ public class Ship {
         weapon.shoot(position.x +16);
     }
 
-    public void damage() {
+    public void damage(Assets assets) {
+        if(!Configuration.isSoundsDisabled()) {
+            assets.shipDamageSound.play();
+        }
+        lifes.loseLifes();
+    }
 
+    public boolean isDestroyed(){
+        if(lifes.getLifes()<0) {
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    public AliensKilled getAliensKilled() {
+        return aliensKilled;
+    }
+
+    public int getLifes() {
+        return lifes.getLifes();
     }
 }
